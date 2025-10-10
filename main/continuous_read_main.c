@@ -11,7 +11,7 @@ static const char *TAG = "Thermistor";
 
 void app_main(void)
 {
-    // --- Grundwerte definieren ---
+    // --- Grundwerte definieren --- supi
     const float U = 3.3;        // Versorgungsspannung
     const float R1 = 10000.0;   // Referenzwiderstand in Ohm
     int adc_raw = 0;
