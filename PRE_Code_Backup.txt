@@ -15,7 +15,7 @@ void app_main(void)
     // --- Konstanten ---
     const float Vcc = 3.3;          // Versorgungsspannung
     const float Rref = 10000.0;     // Referenzwiderstand in Ohm
-    const float Beta = 3435.0;      // Beta-Wert des NTC
+    const float Beta = 3950.0;      // Beta-Wert des NTC
     const float T0 = 298.15;        // 25°C in Kelvin
     const float R0 = 10000.0;       // NTC-Widerstand bei 25°C
 
@@ -33,7 +33,7 @@ void app_main(void)
     ESP_ERROR_CHECK(adc_oneshot_new_unit(&init_config, &adc_handle));
 
     adc_oneshot_chan_cfg_t config = {
-        .atten = ADC_ATTEN_DB_11,     // bis ~3.3V
+        .atten = ADC_ATTEN_DB_11,     // bis ca. 3.3 V
         .bitwidth = ADC_BITWIDTH_12,  // 0–4095
     };
     ESP_ERROR_CHECK(adc_oneshot_config_channel(adc_handle, ADC_CHANNEL, &config));
@@ -58,30 +58,17 @@ void app_main(void)
         // Temperatur berechnen (Beta-Gleichung)
         if (Rntc > 0)
         {
-            // Richtige Beta-Formel
-            TempK = Beta / (log(Rntc / R0) + (Beta / T0));
+            TempK = 1.0 / (1.0 / T0 + (1.0 / Beta) * log(Rntc / R0));
             TempC = TempK - 273.15;
         }
         else
         {
-            TempC = -999.0;
+            TempC = -999.0; // Fehlerwert für gooner
         }
 
-        
+        // Ausgabe
+        ESP_LOGI(TAG, "ADC: %d | U=%.3f V | Rntc=%.1f Ohm | T=%.2f °C", adc_raw, Vout, Rntc, TempC);
 
-        // --- Rohwerte + Berechnung ausgeben ---
-        ESP_LOGI(TAG,
-                 "\nRAW ADC: %d"
-                 "\nUT (Volt): %.4f V"
-                 "\nR(T): %.2f Ohm"
-                 "\nTemperatur: %.2f °C\n",
-                 "\nvout: %.2f "
-                 adc_raw, Vout, Rntc, TempC, Vout);
-
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        vTaskDelay(pdMS_TO_TICKS(1000)); // 1 Sekunde Pause
     }
 }
-
-// Widerstand: Roh 10k
-// Thermistor: 1,6V
-// Spannung: 3,3V
