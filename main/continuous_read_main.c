@@ -12,6 +12,7 @@ static const char *TAG = "Thermistor";
 
 void app_main(void)
 {
+<<<<<<< HEAD
     // --- Konstanten ---
     const float Vcc = 3.3;          // Versorgungsspannung
     const float Rref = 10000.0;     // Referenzwiderstand in Ohm
@@ -19,6 +20,11 @@ void app_main(void)
     const float T0 = 298.15;        // 25°C in Kelvin
     const float R0 = 10000.0;       // NTC-Widerstand bei 25°C
 
+=======
+    // --- Grundwerte definieren --- supi
+    const float U = 3.3;        // Versorgungsspannung
+    const float R1 = 10000.0;   // Referenzwiderstand in Ohm
+>>>>>>> f3fde9cf89066d901ba459f33c6c50b762818d15
     int adc_raw = 0;
     float Vout = 0.0;
     float Rntc = 0.0;
